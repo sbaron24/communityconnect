@@ -1,20 +1,18 @@
-import React from "react";
-import qs from "qs-lite";
-import { Link, Route } from "react-router-dom";
-import { Button } from "reactstrap";
-import PropTypes from "prop-types";
-import { faShare } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import SavedResources from "./SavedResourcesContainer";
+import React from 'react';
+import qs from 'qs-lite';
+import { Link, Route } from 'react-router-dom';
+import { Button } from 'reactstrap';
+import SavedResources from './SavedResourcesContainer';
+import { faShare } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const ToShareButton = ({ resourcePath }) => {
-  const query = qs.parse(window.location.search.replace("?", ""));
+const ToShareButton = props => {
+  const query = qs.parse(window.location.search.replace('?', ''));
   let resources = [];
-  let tempUrl = "";
-
+  let tempUrl = '';
   if (query.resources) {
-    resources = query.resources.split(",");
-    tempUrl = `/${resourcePath}/?resources=${resources.join(",")}`;
+    resources = query.resources.split(',');
+    tempUrl = `/${props.resourcePath}/?resources=${resources.join(',')}`;
   }
 
   return (
@@ -31,26 +29,24 @@ const ToShareButton = ({ resourcePath }) => {
   );
 };
 
-ToShareButton.propTypes = {
-  resourcePath: PropTypes.string.isRequired,
-};
-
-const SavedResourcePanel = () => (
-  <div className="saved-resource-panel">
-    <div className="saved-resource-panel-header">
-      <span style={{ fontSize: "22.4px" }}>Saved Resources</span>
-      <span>
-        <Route
-          exact
-          path="/:resource/admin"
-          render={({ match }) => (
-            <ToShareButton resourcePath={match.params.resource} />
-          )}
-        />
-      </span>
+const SavedResourcePanel = () => {
+  return (
+    <div className="saved-resource-panel">
+      <div className="saved-resource-panel-header">
+        <span style={{ fontSize: '22.4px' }}>Saved Resources</span>
+        <span>
+          <Route
+            exact
+            path="/:resource/admin"
+            render={props => (
+              <ToShareButton resourcePath={props.match.params.resource} />
+            )}
+          />
+        </span>
+      </div>
+      <SavedResources />
     </div>
-    <SavedResources />
-  </div>
-);
+  );
+};
 
 export default SavedResourcePanel;

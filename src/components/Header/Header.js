@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 import { Route, withRouter } from "react-router";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
+import * as resourceAction from "../../action/resourceDataAction";
 import cx from "classnames";
 
 import {
@@ -13,29 +13,23 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter,
+  ModalFooter
 } from "reactstrap";
-import * as resourceAction from "../../action/resourceDataAction";
 
 class Header extends Component {
-  static propTypes = {
-    savedResource: PropTypes.array.isRequired,
-    actions: PropTypes.object.isRequired,
-    toggleSavedResourcesPane: PropTypes.func.isRequired,
-    match: PropTypes.object.isRequired,
-  };
-
   constructor(props) {
     super(props);
 
     this.state = {
       collapsed: true,
-      modal: false,
+      modal: false
     };
   }
 
   toggleNavbar = () => {
-    this.setState(prevState => ({ collapsed: !prevState.collapsed }));
+    this.setState({
+      collapsed: !this.state.collapsed
+    });
   };
 
   modalOpen = () => {
@@ -47,7 +41,9 @@ class Header extends Component {
   };
 
   modalToggle = () => {
-    this.setState(prevState => ({ modal: !prevState.modal }));
+    this.setState({
+      modal: !this.state.modal
+    });
   };
 
   confirmationModalToggle = () => {
@@ -57,9 +53,8 @@ class Header extends Component {
 
   render() {
     const { savedResource, toggleSavedResourcesPane } = this.props;
-
     const savedResourceButtonClassNames = cx("saved-resource-button", {
-      "has-selections": savedResource.length,
+      "has-selections": savedResource.length
     });
 
     return (
@@ -72,7 +67,6 @@ class Header extends Component {
             path="/:resource/admin"
             render={() => (
               <button
-                type="button"
                 className={savedResourceButtonClassNames}
                 onClick={toggleSavedResourcesPane}
               >
@@ -106,15 +100,15 @@ class Header extends Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
   return {
-    savedResource: state.savedResource,
+    savedResource: state.savedResource
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(resourceAction, dispatch),
+    actions: bindActionCreators(resourceAction, dispatch)
   };
 }
 export default compose(

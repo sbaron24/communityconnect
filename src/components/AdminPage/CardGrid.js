@@ -1,24 +1,11 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import OrganizationCard from "../Common/OrganizationCard";
-import SortBar from "../Common/SortBar";
-import SearchBar from "../Header/SearchBar";
-import getDistance from "../../utils/distance";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import OrganizationCard from '../Common/OrganizationCard';
+import { SortBar } from '../Common/SortBar.js';
+import SearchBar from '../Header/SearchBar';
+import { getDistance } from '../../utils/distance.js';
 
-class CardGrid extends Component {
-  static propTypes = {
-    currentPos: PropTypes.object.isRequired,
-    resource: PropTypes.array.isRequired,
-    handleFilter: PropTypes.func,
-    saveItem: PropTypes.func,
-  };
-
-  static defaultProps = {
-    handleFilter: null,
-    saveItem: null,
-  };
-
+export class CardGrid extends Component {
   constructor(props) {
     super(props);
 
@@ -40,30 +27,31 @@ class CardGrid extends Component {
 
   getCloserName = (a, b) => {
     if (a.name > b.name) return 1;
-    if (a.name < b.name) return -1;
-
-    return 0;
+    else if (a.name < b.name) return -1;
+    else return 0;
   };
 
-  sortByAlphabet = () => this.props.resource.slice().sort(this.getCloserName);
+  sortByAlphabet = () => {
+    return this.props.resource.slice().sort(this.getCloserName);
+  };
 
-  sortByDistance = () =>
-    this.props.resource.slice().sort(this.getCloserResource);
+  sortByDistance = () => {
+    return this.props.resource.slice().sort(this.getCloserResource);
+  };
 
   handleSortChange = newSort => {
-    if (this.state.dataSort !== newSort) {
+    if (this.state.dataSort !== newSort)
       this.setState({
         // Set the dataSort variable to whichever sort function is chosen
         dataSort: newSort,
       });
-    }
   };
 
   render() {
     const sortOptions = [
-      { key: "A-Z", sort: this.sortByAlphabet, disabled: false },
+      { key: 'A-Z', sort: this.sortByAlphabet, disabled: false },
       {
-        key: "Distance",
+        key: 'Distance',
         sort: this.sortByDistance,
         disabled: !this.props.currentPos,
       },
@@ -85,14 +73,14 @@ class CardGrid extends Component {
           />
         </div>
         <div className="card-list">
-          {sortedData.map(resource => (
+          {sortedData.map((resource, index) => (
             <OrganizationCard
               key={resource.id}
               index={resource.id}
               organization={resource}
               currentPos={this.props.currentPos}
               saveItem={() => this.props.saveItem(resource)}
-              saveable
+              saveable={true}
             />
           ))}
         </div>
@@ -101,12 +89,9 @@ class CardGrid extends Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
   const filteredResourceSet = new Set(state.filteredResource.map(x => x.id));
-
-  const resource = state.searchedResource.filter(x =>
-    filteredResourceSet.has(x.id)
-  );
+  const resource = state.searchedResource.filter(x => filteredResourceSet.has(x.id));
 
   return { resource };
 }

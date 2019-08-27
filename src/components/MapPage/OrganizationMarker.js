@@ -1,13 +1,7 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { Marker, InfoWindow } from "react-google-maps";
+import React, { Component } from 'react';
+import { Marker, InfoWindow } from 'react-google-maps';
 
-class OrganizationMarker extends Component {
-  static propTypes = {
-    open: PropTypes.bool.isRequired,
-    resource: PropTypes.object.isRequired,
-  };
-
+export class OrganizationMarker extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -17,21 +11,17 @@ class OrganizationMarker extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.open !== this.props.open) {
-      this.updateOpen();
+      this.setState({ open: this.props.open });
     }
   }
+  //scrollToElement  and handleClickOfInfoWindow is currently non-functional
 
-  // scrollToElement  and handleClickOfInfoWindow is currently non-functional
-  updateOpen = () => {
-    this.setState({ open: this.props.open });
-  };
-
-  scrollToElement = () => {
+  scrollToElement = e => {
     this.setState({ open: true });
   };
 
   handleClickOfInfoWindow = e => {
-    const element = document.getElementById(e.currentTarget.id);
+    var element = document.getElementById(e.currentTarget.id);
     element.scrollIntoView();
   };
 
@@ -40,8 +30,7 @@ class OrganizationMarker extends Component {
   };
 
   render() {
-    const { resource } = this.props;
-
+    let { resource } = this.props;
     return (
       <Marker
         optimize={false}
@@ -51,19 +40,17 @@ class OrganizationMarker extends Component {
         {this.state.open && (
           <InfoWindow onCloseClick={this.handleClose}>
             <div>
-              {resource.groupedResource.map(resourceData => (
+              {resource.groupedResource.map(resource => (
                 <div
-                  key={resourceData.id}
-                  id={resourceData.id}
+                  key={resource.id}
+                  id={resource.id}
                   onClick={this.handleClickOfInfoWindow}
                 >
-                  <h3>{resourceData.name}</h3>
-                  <div>{resourceData.combinedaddress}</div>
-                  <div>{resourceData.tags}</div>
+                  <h3>{resource.name}</h3>
+                  <div>{resource.combinedaddress}</div>
+                  <div>{resource.tags}</div>
                   <div>
-                    <a href={`tel:${resourceData.phone}`}>
-                      {resourceData.phone}
-                    </a>
+                    <a href={`tel:${resource.phone}`}>{resource.phone}</a>
                   </div>
                 </div>
               ))}

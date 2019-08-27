@@ -1,25 +1,23 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import cx from "classnames";
-import ResultList from "./ResultList";
-import OrganizationMap from "./OrganizationMap";
-import SplitScreenSlidingPane from "./SplitScreenSlidingPane";
+import React, { Component } from 'react';
+
+import ResultList from './ResultList';
+import OrganizationMap from './OrganizationMap';
+import { SplitScreenSlidingPane } from './SplitScreenSlidingPane';
+import cx from 'classnames';
 
 class MapPage extends Component {
-  static propTypes = {
-    currentPosition: PropTypes.object.isRequired,
-  };
-
   render() {
-    const mapClassName = cx("map-container");
-
+    const mapClassName = cx('map-container');
     return (
       <div className={mapClassName}>
         <SplitScreenSlidingPane>
           <ResultList
+            ref={instance => {
+              this.resultListItem = instance;
+            }}
             cardClick={this.cardClick}
             currentPos={this.props.currentPosition}
-            fullWidth
+            fullWidth={true}
           />
         </SplitScreenSlidingPane>
         <div className="static-pane">

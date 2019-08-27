@@ -1,7 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import CategoryList from "./CategoryList";
-import CardGrid from "./CardGrid";
+import React from 'react';
+import CategoryList from './CategoryList';
+import CardGrid from './CardGrid';
 
 const AdminPage = ({ currentPosition }) => (
   <div className="admin-pane">
@@ -9,9 +8,5 @@ const AdminPage = ({ currentPosition }) => (
     <CardGrid currentPos={currentPosition} />
   </div>
 );
-
-AdminPage.propTypes = {
-  currentPosition: PropTypes.object.isRequired,
-};
 
 export default AdminPage;

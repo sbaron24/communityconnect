@@ -1,14 +1,14 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-import PropTypes from "prop-types";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import PropTypes from 'prop-types';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 // import styles from './SavedResourcesContainer.module.css';
-import SavedResource from "./SavedResource";
+import SavedResource from './SavedResource';
 
-const getItemStyle = (_, draggableStyle) => ({
+const getItemStyle = (isDragging, draggableStyle) => ({
   // some basic styles to make the items look a bit nicer
-  userSelect: "none",
+  userSelect: 'none',
 
   // change background colour if dragging
 
@@ -17,40 +17,30 @@ const getItemStyle = (_, draggableStyle) => ({
 });
 
 class SavedResourcesContainer extends Component {
-  static propTypes = {
-    data: PropTypes.array.isRequired,
-    currentPos: PropTypes.object,
-    removeItem: PropTypes.func,
-  };
-
-  static defaultProps = {
-    currentPos: null,
-    removeItem: null,
-  };
-
   constructor(props) {
     super(props);
     this.state = {
       data: Object.assign([], this.props.data),
     };
+    this.onDragEnd = this.onDragEnd.bind(this);
   }
 
-  // Using deprecated function necessary to update data with store's data
+  //Using deprecated function necessary to update data with store's data
   componentWillReceiveProps(nextProps) {
     this.setState({ data: Object.assign([], nextProps.data) });
   }
-
-  onDragEnd = result => {
+  onDragEnd(result) {
     // dropped outside the list
     if (!result.destination) {
       return;
     }
 
     this.orderResources(result.source.index, result.destination.index);
-  };
+  }
 
   orderResources = (sourceIndex, destinationIndex) => {
     const newSavedResources = this.props.data.slice();
+
     const movedResource = newSavedResources[sourceIndex];
     newSavedResources.splice(sourceIndex, 1);
     newSavedResources.splice(destinationIndex, 0, movedResource);
@@ -59,7 +49,6 @@ class SavedResourcesContainer extends Component {
       data: newSavedResources,
     });
   };
-
   render() {
     // Render will be called every time this.props.data is updated, and every time handleSortChange
     // updates the this.state.dataSort variable.
@@ -67,13 +56,12 @@ class SavedResourcesContainer extends Component {
     // source of data
 
     const { data } = this.state;
-
     return (
       <div>
         <div className="saved-resources-container">
           <DragDropContext onDragEnd={this.onDragEnd}>
             <Droppable droppableId="droppable">
-              {provided => (
+              {(provided, snapshot) => (
                 <div ref={provided.innerRef}>
                   {data.length ? (
                     data.map((item, index) => (
@@ -82,18 +70,19 @@ class SavedResourcesContainer extends Component {
                         draggableId={item.id}
                         index={index}
                       >
-                        {(provided2, snapshot) => (
+                        {(provided, snapshot) => (
                           <div
-                            ref={provided2.innerRef}
-                            {...provided2.draggableProps}
-                            {...provided2.dragHandleProps}
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
                             style={getItemStyle(
                               snapshot.isDragging,
-                              provided2.draggableProps.style
+                              provided.draggableProps.style,
                             )}
                           >
                             <SavedResource
                               key={item.id}
+                              ref={item.id}
                               organization={item}
                               currentPos={this.props.currentPos}
                               removeItem={() => this.props.removeItem(item)}
@@ -118,7 +107,11 @@ class SavedResourcesContainer extends Component {
   }
 }
 
-function mapStateToProps(state) {
+SavedResourcesContainer.propTypes = {
+  data: PropTypes.array.isRequired,
+};
+
+function mapStateToProps(state, ownProps) {
   return {
     data: state.savedResource,
   };
